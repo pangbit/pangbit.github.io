@@ -125,7 +125,6 @@
       }
       e.preventDefault();
     } else if (key === 'Escape') {
-      this.stop();
       window.stopEffect();
       e.preventDefault();
     } else if (key === 'Enter') {

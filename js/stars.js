@@ -233,6 +233,8 @@
 
     if (trail.length < 2) return;
 
+    ctx.save();
+
     // Draw the tail as a series of connected segments with fading alpha
     for (var i = 1; i < trail.length; i++) {
       var t     = i / trail.length;               // 0 at tail, 1 at head
@@ -260,6 +262,8 @@
     ctx.arc(head.x, head.y, m.radius * 3 * m.life, 0, Math.PI * 2);
     ctx.fillStyle = 'rgba(' + c.r + ',' + c.g + ',' + c.b + ',' + (m.life * 0.25) + ')';
     ctx.fill();
+
+    ctx.restore();
   };
 
   /* ── stop() ── */

@@ -43,12 +43,11 @@ window.startEffect = function (effect) {
 
   effect.start(canvas, ctx);
 
-  function loop() {
+  animFrameId = requestAnimationFrame(function loop() {
     effect.update();
     effect.draw();
     animFrameId = requestAnimationFrame(loop);
-  }
-  loop();
+  });
 };
 
 /**
@@ -295,8 +294,12 @@ class Terminal {
     });
 
     this.registerCommand('stop', 'Stop the current background effect', () => {
-      window.stopEffect();
-      this.print('Effect stopped.', 'line-info');
+      if (currentEffect) {
+        window.stopEffect();
+        this.print('Effect stopped.', 'line-info');
+      } else {
+        this.print('No effect is currently running.', 'line-info');
+      }
     });
   }
 }
