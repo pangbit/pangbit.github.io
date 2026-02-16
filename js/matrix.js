@@ -5,8 +5,8 @@
 (function () {
   'use strict';
 
-  // Character set: digits + ASCII symbols (pure data stream aesthetic)
-  var CHARSET = '0123456789!@#$%^&*()-_=+[]{}|;:\'",.<>?/\\~`';
+  // Character set: binary/hex data stream — unmistakably "code"
+  var CHARSET = '0011010011101001ABCDEF0123456789';
 
   var FONT_SIZE = 16;
 
