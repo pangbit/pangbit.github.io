@@ -96,7 +96,8 @@ class Terminal {
     // DOM references
     this.output = document.getElementById('output');
     this.hiddenInput = document.getElementById('hidden-input');
-    this.inputMirror = document.getElementById('input-mirror');
+    this.inputBefore = document.getElementById('input-before');
+    this.inputAfter = document.getElementById('input-after');
     this.cursor = document.getElementById('cursor');
     this.bg = document.getElementById('bg');
     this.terminalEl = document.getElementById('terminal');
@@ -201,19 +202,27 @@ class Terminal {
         e.preventDefault();
         this.handleInput(input.value);
         input.value = '';
-        this.inputMirror.textContent = '';
+        this._syncMirror();
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
         this._navigateHistory(-1);
       } else if (e.key === 'ArrowDown') {
         e.preventDefault();
         this._navigateHistory(1);
+      } else {
+        // Defer sync to after the key event updates selectionStart
+        requestAnimationFrame(() => this._syncMirror());
       }
     });
 
-    // Sync mirror on every input change
+    // Sync mirror on every input change (covers paste, etc.)
     input.addEventListener('input', () => {
-      this.inputMirror.textContent = input.value;
+      this._syncMirror();
+    });
+
+    // Also sync on click within hidden input (selection change)
+    input.addEventListener('select', () => {
+      this._syncMirror();
     });
 
     // Click anywhere on terminal to focus
@@ -255,6 +264,15 @@ class Terminal {
     });
   }
 
+  /* ── Private: sync visible cursor with actual input position ── */
+
+  _syncMirror() {
+    const val = this.hiddenInput.value;
+    const pos = this.hiddenInput.selectionStart || 0;
+    this.inputBefore.textContent = val.substring(0, pos);
+    this.inputAfter.textContent = val.substring(pos);
+  }
+
   /* ── Private: history navigation ── */
 
   _navigateHistory(direction) {
@@ -280,14 +298,17 @@ class Terminal {
         // Past the end — clear
         this.historyIndex = -1;
         this.hiddenInput.value = '';
-        this.inputMirror.textContent = '';
+        this._syncMirror();
         return;
       }
     }
 
     const entry = this.history[this.historyIndex];
     this.hiddenInput.value = entry;
-    this.inputMirror.textContent = entry;
+    // Move cursor to end of recalled entry
+    this.hiddenInput.selectionStart = entry.length;
+    this.hiddenInput.selectionEnd = entry.length;
+    this._syncMirror();
   }
 
   /* ── Private: built-in commands ── */
