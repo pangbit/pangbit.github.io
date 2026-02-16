@@ -5,18 +5,8 @@
 (function () {
   'use strict';
 
-  // Character set: Katakana (U+30A0-U+30FF) + digits 0-9 + some Latin uppercase
-  var CHARSET = '';
-  var i;
-
-  // Katakana range
-  for (i = 0x30A0; i <= 0x30FF; i++) {
-    CHARSET += String.fromCharCode(i);
-  }
-  // Digits
-  CHARSET += '0123456789';
-  // Latin uppercase subset
-  CHARSET += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  // Character set: digits + ASCII symbols (pure data stream aesthetic)
+  var CHARSET = '0123456789!@#$%^&*()-_=+[]{}|;:\'",.<>?/\\~`';
 
   var FONT_SIZE = 16;
 
