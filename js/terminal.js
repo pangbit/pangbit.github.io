@@ -226,13 +226,30 @@ class Terminal {
       input.focus();
     });
 
-    // Focus on any keypress when terminal is visible
+    // Toggle terminal with backtick key
     document.addEventListener('keydown', (e) => {
+      if (e.key === '`' && !e.metaKey && !e.ctrlKey && !e.altKey) {
+        // Don't toggle during snake game (terminal already hidden by snake)
+        if (this.terminalEl.style.display === 'none') return;
+        if (this.terminalEl.classList.contains('hidden')) {
+          this.terminalEl.classList.remove('hidden');
+          this.terminalEl.style.opacity = '';
+          this.terminalEl.style.pointerEvents = '';
+          input.focus();
+        } else {
+          this.terminalEl.classList.add('hidden');
+          this.terminalEl.style.opacity = '0';
+          this.terminalEl.style.pointerEvents = 'none';
+        }
+        e.preventDefault();
+        return;
+      }
       // Avoid hijacking system shortcuts
       if (e.metaKey || e.ctrlKey || e.altKey) {
         return;
       }
-      if (this.terminalEl.offsetParent !== null) {
+      // Focus on any keypress when terminal is visible
+      if (this.terminalEl.offsetParent !== null && !this.terminalEl.classList.contains('hidden')) {
         input.focus();
       }
     });
@@ -286,6 +303,8 @@ class Terminal {
         const padding = ' '.repeat(maxLen - name.length + 4);
         this.print('  ' + name + padding + this.commands[name].description, 'line-info');
       }
+      this.print('');
+      this.print('  Press ` (backtick) to toggle terminal', 'line-info');
       this.print('');
     });
 
