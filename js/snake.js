@@ -165,12 +165,9 @@
       y: head.y + this.direction.y
     };
 
-    // Wall collision
-    if (newHead.x < 0 || newHead.x >= this.cols ||
-        newHead.y < 0 || newHead.y >= this.rows) {
-      this.gameOver = true;
-      return;
-    }
+    // Wrap around edges (no wall collision)
+    newHead.x = (newHead.x + this.cols) % this.cols;
+    newHead.y = (newHead.y + this.rows) % this.rows;
 
     // Self collision (check against all current segments)
     for (var i = 0; i < this.snake.length; i++) {
