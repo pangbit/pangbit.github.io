@@ -7,7 +7,7 @@
 
   var CHARSET = '01';
 
-  var FONT_SIZE = 16;
+  var FONT_SIZE = 20;
 
   function MatrixEffect() {
     this.canvas = null;
