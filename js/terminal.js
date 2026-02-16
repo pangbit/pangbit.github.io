@@ -177,8 +177,18 @@ class Terminal {
   /* ── Welcome message ── */
 
   showWelcome() {
-    this.print('Welcome to the Playground.', 'line-info');
-    this.print("Type 'help' to see available commands.", 'line-info');
+    const banner = [
+      ' ____   _   _  _  ___ ___ ___ _____ ',
+      '|  _ \\ / \\ | \\| |/ __| _ )_ _|_   _|',
+      '| |_) / _ \\| .` | (_ | _ \\| |  | |  ',
+      '|___/_/ \\_\\_|\\_|\\___|___/___| |_|  ',
+      '                                      ',
+    ];
+    for (const line of banner) {
+      this.print(line, 'line-accent');
+    }
+    this.print('');
+    this.print("  Type 'help' to begin.", 'line-info');
   }
 
   /* ── Private: event binding ── */
@@ -267,14 +277,17 @@ class Terminal {
   /* ── Private: built-in commands ── */
 
   _registerBuiltins() {
-    this.registerCommand('help', 'Show available commands', () => {
-      this.print('Available commands:', 'line-accent');
+    this.registerCommand('help', 'Show this message', () => {
+      this.print('');
+      this.print('  Available Commands:', 'line-accent');
+      this.print('');
       const names = Object.keys(this.commands).sort();
       const maxLen = Math.max(...names.map((n) => n.length));
       for (const name of names) {
-        const padding = ' '.repeat(maxLen - name.length + 2);
+        const padding = ' '.repeat(maxLen - name.length + 4);
         this.print('  ' + name + padding + this.commands[name].description, 'line-info');
       }
+      this.print('');
     });
 
     this.registerCommand('clear', 'Clear the terminal', () => {
@@ -288,7 +301,77 @@ class Terminal {
   }
 }
 
+/* ===================================================================
+ *  Idle Effect — Subtle drifting particles  (Task 8)
+ * =================================================================== */
+
+class IdleEffect {
+  constructor() {
+    this.particles = [];
+    this.canvas = null;
+    this.ctx = null;
+    this.particleCount = 40;
+  }
+
+  start(canvas, ctx) {
+    this.canvas = canvas;
+    this.ctx = ctx;
+    this.particles = [];
+
+    for (let i = 0; i < this.particleCount; i++) {
+      this.particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3,
+        size: 1 + Math.random(),
+        alpha: 0.15 + Math.random() * 0.2,
+      });
+    }
+  }
+
+  update() {
+    const w = this.canvas.width;
+    const h = this.canvas.height;
+
+    for (const p of this.particles) {
+      p.x += p.vx;
+      p.y += p.vy;
+
+      // Wrap around edges
+      if (p.x < 0) p.x += w;
+      if (p.x > w) p.x -= w;
+      if (p.y < 0) p.y += h;
+      if (p.y > h) p.y -= h;
+    }
+  }
+
+  draw() {
+    const ctx = this.ctx;
+    ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+    for (const p of this.particles) {
+      ctx.globalAlpha = p.alpha;
+      ctx.fillStyle = '#00ff41';
+      ctx.fillRect(p.x, p.y, p.size, p.size);
+    }
+
+    ctx.globalAlpha = 1;
+  }
+
+  stop() {
+    this.particles = [];
+  }
+
+  resize(w, h) {
+    // Particles will naturally wrap — no special handling needed
+  }
+}
+
 /* ── Bootstrap ── */
 
 window.terminal = new Terminal();
 terminal.showWelcome();
+
+// Start subtle idle animation on the background canvas
+window.startEffect(new IdleEffect());
