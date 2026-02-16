@@ -40,7 +40,7 @@
       // Mouse interaction: columns within 5 of the cursor get a speed boost
       var boost = 1;
       if (mouseCol >= 0 && Math.abs(i - mouseCol) < 5) {
-        boost = 2;
+        boost = 1.5;
       }
 
       this.drops[i] += this.speeds[i] * boost;
@@ -49,7 +49,7 @@
       if (this.drops[i] * FONT_SIZE > this.canvas.height && Math.random() > 0.975) {
         this.drops[i] = 0;
         // Give it a fresh random speed
-        this.speeds[i] = 0.5 + Math.random();
+        this.speeds[i] = 0.2 + Math.random() * 0.5;
       }
     }
   };
@@ -62,7 +62,7 @@
     var ctx = this.ctx;
 
     // Trail fade: do NOT clear the canvas — paint a translucent black rect
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
     ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
     ctx.font = FONT_SIZE + 'px monospace';
@@ -117,7 +117,7 @@
     for (var i = 0; i < this.columns; i++) {
       // Staggered start: random negative values so columns begin at different times
       this.drops[i] = -(Math.random() * (this.canvas.height / FONT_SIZE));
-      this.speeds[i] = 0.5 + Math.random();
+      this.speeds[i] = 0.2 + Math.random() * 0.5;
     }
   };
 
